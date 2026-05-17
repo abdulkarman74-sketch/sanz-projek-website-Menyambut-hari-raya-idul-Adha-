@@ -1,0 +1,6 @@
+{
+  "name": "Website Idul Adha 1447 H - Premium",
+  "description": "Website interaktif menyambut Hari Raya Idul Adha 1447 H / 28 Mei 2026. Dilengkapi dengan efek visual premium, countdown hitung mundur, audio Islami, dan generator kartu ucapan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
