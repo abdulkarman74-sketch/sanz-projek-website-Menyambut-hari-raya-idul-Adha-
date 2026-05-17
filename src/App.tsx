@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Fragment } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
 import { Copy, Play, Pause, CheckCircle2, ChevronUp, Moon, Star, BookOpen, Quote, Info, Crown, Sparkles, Heart, Share2 } from 'lucide-react';
 
@@ -43,11 +43,10 @@ export default function App() {
                 <>
                     <StickyNav />
                     
-                    <main className="relative z-10 w-full mx-auto flex flex-col gap-32 pt-24 pb-32">
+                    <main className="relative z-10 w-full mx-auto flex flex-col gap-32 pt-0 pb-32">
                         {/* Wrapper for constrained sections */}
                         <div className="max-w-6xl mx-auto px-4 md:px-8 flex flex-col gap-32 w-full">
                             <SectionHero />
-                            <SectionCountdown />
                             <SectionMakna />
                             <SectionKisah />
                             <SectionTakbir />
@@ -55,7 +54,6 @@ export default function App() {
                             <SectionAmalan />
                             <SectionFakta />
                             <SectionUcapan />
-                            <SectionAudio />
                         </div>
                         
                         {/* Full width section */}
@@ -68,6 +66,8 @@ export default function App() {
                     </main>
 
                     <Footer />
+                    
+                    <FloatingAudio />
 
                     {/* Back to Top */}
                     <AnimatePresence>
@@ -247,42 +247,8 @@ function StarsCanvas() {
 }
 
 function SectionHero() {
-    return (
-        <section id="beranda" className="hero min-h-screen flex flex-col justify-center items-center text-center pt-20 relative hero-vignette">
-            <StarsCanvas />
-            <Reveal className="relative z-10 w-full">
-                <div className="relative mb-8 flex justify-center items-center">
-                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="absolute text-gold moon-icon">
-                        <Moon size={160} strokeWidth={0.5} />
-                    </motion.div>
-                    <Star size={60} className="text-gold mt-6 fill-gold/20" />
-                </div>
-            </Reveal>
-            <Reveal delay={0.2} className="relative z-10 w-full">
-                <h1 className="arabic-main mb-8 font-amiri text-[clamp(3.2rem,9vw,6.5rem)] text-[#c9a84c] leading-[1.4] text-center drop-shadow-2xl">
-                    عِيدُ الأَضْحَى مُبَارَك
-                </h1>
-                <h2 className="hero-title font-cinzel text-[clamp(1.8rem,5vw,4rem)] font-black uppercase tracking-[0.08em] text-white mb-6 py-4 max-w-4xl mx-auto">
-                    Selamat Hari Raya<br className="md:hidden" /> Idul Adha 1447 H
-                </h2>
-                <p className="text-xl md:text-2xl text-gold-light italic tracking-wide mb-14 drop-shadow-md">
-                    10 Dzulhijjah 1447 H • Kamis, 28 Mei 2026
-                </p>
-                <div className="takbir-marquee max-w-2xl mx-auto relative">
-                    <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[rgba(2,12,5,0.9)] to-transparent z-10" />
-                    <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[rgba(2,12,5,0.9)] to-transparent z-10" />
-                    <div className="animate-marquee font-amiri text-3xl md:text-4xl text-gold drop-shadow-md">
-                        اَللّٰهُ أَكْبَرُ اَللّٰهُ أَكْبَرُ اَللّٰهُ أَكْبَرُ لَا إِلٰهَ إِلَّا اللّٰهُ وَاللّٰهُ أَكْبَرُ اَللّٰهُ أَكْبَرُ وَلِلّٰهِ الْحَمْدُ
-                    </div>
-                </div>
-            </Reveal>
-        </section>
-    );
-}
-
-function SectionCountdown() {
     const targetDate = new Date("May 28, 2026 00:00:00").getTime();
-    const startDate = new Date("May 18, 2026 00:00:00").getTime(); // Reference internal calculation
+    const startDate = new Date("May 18, 2026 00:00:00").getTime();
     const [timeLeft, setTimeLeft] = useState<any>(null);
 
     useEffect(() => {
@@ -290,6 +256,7 @@ function SectionCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
             if (distance < 0) return setTimeLeft("EID");
+            
             setTimeLeft({
                 d: Math.floor(distance / (1000 * 60 * 60 * 24)),
                 h: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
@@ -303,35 +270,145 @@ function SectionCountdown() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (timeLeft === "EID") {
+            const symbols = ['✦', '☽', '★', '✿', '◆'];
+            const colors  = ['#c9a84c', '#f5d98b', '#ffffff', '#2d6a3f', '#8b6914'];
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                if(count >= 80) {
+                    clearInterval(interval);
+                    return;
+                }
+                const el = document.createElement('div');
+                el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                el.style.cssText = `
+                    position: fixed;
+                    top: -20px;
+                    left: ${Math.random() * 100}vw;
+                    font-size: ${Math.random() * 16 + 10}px;
+                    color: ${colors[Math.floor(Math.random() * colors.length)]};
+                    z-index: 9999;
+                    pointer-events: none;
+                    animation: confettiFall ${Math.random() * 3 + 2}s linear forwards;
+                    transform: rotate(${Math.random() * 360}deg);
+                `;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 5000);
+                count++;
+            }, 60);
+
+            return () => clearInterval(interval);
+        }
+    }, [timeLeft]);
+
     return (
-        <section id="countdown">
-            <Reveal>
-                <GlassCard className="flex flex-col items-center islamic-arch shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-gold/40">
-                    <div className="text-gold text-sm tracking-[0.4em] uppercase mb-10 border-b border-gold/20 pb-2">Menghitung Hari Menuju Kemenangan</div>
-                    {timeLeft === "EID" ? (
-                        <div className="text-center py-10">
-                            <h2 className="font-cinzel text-5xl md:text-6xl text-gold mb-6">Hari Raya Telah Tiba</h2>
-                            <div className="font-amiri text-5xl md:text-7xl text-cream drop-shadow-[0_0_20px_rgba(201,168,76,0.3)]">تَقَبَّلَ اللّٰهُ مِنَّا وَمِنْكُمْ</div>
-                        </div>
-                    ) : timeLeft ? (
-                        <>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 w-full max-w-4xl mb-14">
-                                {Object.entries({ Hari: timeLeft.d, Jam: timeLeft.h, Menit: timeLeft.m, Detik: timeLeft.s }).map(([label, val]) => (
-                                    <div key={label} className="bg-black/40 border-2 border-gold/30 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center shadow-inner relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-gold/5 group-hover:bg-gold/10 transition-colors" />
-                                        <div className="font-cinzel text-5xl md:text-8xl font-bold text-cream mb-2 drop-shadow-md z-10">{val.toString().padStart(2, '0')}</div>
-                                        <div className="text-xs md:text-sm uppercase text-gold tracking-[0.4em] font-bold z-10">{label}</div>
+        <section id="beranda" className="hero min-h-[100vh] flex flex-col justify-center items-center text-center relative overflow-hidden hero-vignette pt-20 pb-10">
+            <StarsCanvas />
+            
+            {timeLeft !== "EID" ? (
+                <Reveal className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center px-4">
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="relative text-gold moon-icon mb-4">
+                        <Moon size={60} strokeWidth={1} />
+                        <Star size={20} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-gold fill-gold/20" />
+                    </motion.div>
+                    
+                    <div className="font-amiri text-gold text-lg md:text-xl mb-4 drop-shadow-md">
+                        بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
+                    </div>
+                    <div className="w-64 h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent mb-4" />
+                    
+                    <div className="text-cream text-lg md:text-xl font-bold tracking-widest uppercase mb-2 flex items-center gap-2">
+                        <Moon size={18} className="text-gold" /> IDUL ADHA 1447 H
+                    </div>
+                    <div className="text-gold-light text-sm md:text-base italic mb-10 tracking-widest font-serif">
+                        10 Dzulhijjah • 28 Mei 2026
+                    </div>
+                    
+                    <div className="border border-gold/30 rounded-xl px-4 md:px-8 py-3 mb-10 bg-black/40 shadow-inner">
+                        <h2 className="font-cinzel text-[10px] md:text-sm text-gold tracking-[0.4em] uppercase leading-relaxed font-bold">
+                            M e n g h i t u n g &nbsp; H a r i<br/>
+                            M e n u j u &nbsp; I d u l &nbsp; A d h a
+                        </h2>
+                    </div>
+
+                    <div className="countdown-container flex flex-wrap justify-center items-center gap-4 md:gap-6 w-full mb-12">
+                        {timeLeft && Object.entries({ 
+                            'Hari': timeLeft.d, 
+                            'Jam': timeLeft.h, 
+                            'Mnt': timeLeft.m, 
+                            'Dtk': timeLeft.s 
+                        }).map(([label, val], i, arr) => (
+                            <Fragment key={label}>
+                                <div className="countdown-box group">
+                                    <div key={val} className="countdown-number drop-shadow-lg">
+                                        {val.toString().padStart(2, '0')}
                                     </div>
-                                ))}
+                                    <div className="countdown-label">{label}</div>
+                                </div>
+                                {i < arr.length - 1 && (
+                                    <div className="countdown-sep hidden sm:block">:</div>
+                                )}
+                            </Fragment>
+                        ))}
+                    </div>
+
+                    {timeLeft && (
+                        <div className="w-full max-w-lg mb-8">
+                            <div className="flex justify-between text-xs text-gold-light mb-2 tracking-wider uppercase font-cinzel px-2">
+                                <span>20 Dzulqa'dah 1447 H</span>
+                                <span>Hari Ini</span>
                             </div>
-                            <div className="w-full max-w-3xl bg-black/60 rounded-full h-3 overflow-hidden border border-gold/20 shadow-inner p-[1px]">
-                                <div className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-light rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(201,168,76,0.5)]" style={{ width: `${timeLeft.p}%` }}></div>
+                            <div className="w-full bg-black/60 rounded-full h-[3px] overflow-hidden">
+                                <div className="h-full bg-gradient-to-r from-gold-dark via-gold to-gold-dark relative" style={{ width: `${timeLeft.p}%` }}>
+                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 bg-cream rounded-full shadow-[0_0_8px_#ffffff]" />
+                                </div>
                             </div>
-                            <div className="mt-6 font-cinzel text-sm md:text-base tracking-[0.3em] text-cream-dark uppercase">10 Dzulhijjah 1447 H • 28 Mei 2026</div>
-                        </>
-                    ) : null}
-                </GlassCard>
-            </Reveal>
+                        </div>
+                    )}
+                </Reveal>
+            ) : (
+                <Reveal className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center px-4">
+                    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:0}} className="arabic-main mb-6 font-amiri text-[clamp(2.5rem,8vw,5.5rem)] text-[#c9a84c] leading-[1.4] text-center drop-shadow-2xl">
+                        عِيدُ الأَضْحَى مُبَارَك
+                    </motion.div>
+                    
+                    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:0.4}}>
+                        <h1 className="hero-title font-cinzel text-[clamp(1.5rem,4vw,3rem)] font-black uppercase tracking-[0.08em] text-white mb-2 py-4">
+                            Selamat Hari Raya Idul Adha
+                        </h1>
+                        <h2 className="text-lg md:text-xl text-gold-light italic tracking-wide mb-2 drop-shadow-md">
+                            1447 H • 28 Mei 2026
+                        </h2>
+                        <p className="text-cream/80 text-xs md:text-sm tracking-widest font-sans uppercase mb-10">
+                            10 Dzulhijjah 1447 H
+                        </p>
+                    </motion.div>
+
+                    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:0.8}} className="takbir-box glass-card border-gold/40 !p-8 text-center mb-10 max-w-2xl bg-black/40">
+                        <div className="font-amiri text-2xl md:text-3xl text-gold drop-shadow-md leading-relaxed md:leading-loose">
+                            اَللّٰهُ أَكْبَرُ اَللّٰهُ أَكْبَرُ اَللّٰهُ أَكْبَرُ<br/>
+                            لَا إِلٰهَ إِلَّا اللّٰهُ وَاللّٰهُ أَكْبَرُ<br/>
+                            اَللّٰهُ أَكْبَرُ وَلِلّٰهِ الْحَمْدُ
+                        </div>
+                    </motion.div>
+
+                    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:1.2}} className="text-center mb-8">
+                        <p className="text-xl md:text-2xl text-cream mb-4 font-amiri leading-loose">
+                            تَقَبَّلَ اللّٰهُ مِنَّا وَمِنْكُمْ<br/>
+                            <em className="text-gold-light text-sm md:text-base font-serif">Taqabbalallahu Minna wa Minkum</em><br/>
+                        </p>
+                        <p className="text-sm text-cream/70 font-serif">
+                            Semoga Allah menerima amal ibadah kita semua
+                        </p>
+                    </motion.div>
+
+                    <motion.div initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} transition={{delay:1.6}}>
+                        <CopyBtn text="Selamat Hari Raya Idul Adha 1447 H. Taqabbalallahu Minna wa Minkum. Semoga Allah menerima amal ibadah kita semua." label="📋 Salin Ucapan" />
+                    </motion.div>
+                </Reveal>
+            )}
         </section>
     );
 }
@@ -588,7 +665,7 @@ function SectionUcapan() {
     );
 }
 
-function SectionAudio() {
+function FloatingAudio() {
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -603,38 +680,16 @@ function SectionAudio() {
     };
 
     return (
-        <section>
-            <Reveal>
-                <div className="flex justify-center">
-                    <GlassCard className="flex flex-col md:flex-row items-center gap-6 !p-6 md:!px-12 md:!py-6 border-gold cursor-pointer hover:shadow-[0_0_30px_rgba(201,168,76,0.3)] transition-all bg-black/60" onClick={togglePlay}>
-                        <audio ref={audioRef} loop src="https://c.termai.cc/a160/d2iDsBg.mp3" />
-                        
-                        <div className={`w-14 h-14 rounded-full border-2 ${isPlaying ? 'border-gold bg-gold/10' : 'border-gold/50'} flex items-center justify-center text-gold transition-colors`}>
-                            {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
-                        </div>
-                        
-                        <div className="text-center md:text-left flex-grow">
-                            <div className="text-xs text-gold uppercase tracking-[0.3em] font-bold mb-1">🎵 Audio Player</div>
-                            <div className="text-lg font-cinzel font-bold text-cream flex items-center justify-center md:justify-start gap-3">
-                                Lantunan Menyambut Idul Adha
-                                {isPlaying && (
-                                    <div className="flex items-end gap-[2px] h-4">
-                                        {[1, 3, 2, 4, 2].map((delay, i) => (
-                                            <motion.div 
-                                                key={i} 
-                                                className="w-1 bg-gold rounded-t-sm"
-                                                animate={{ height: ["20%", "100%", "20%"] }}
-                                                transition={{ duration: 0.8, repeat: Infinity, delay: delay * 0.15 }}
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </GlassCard>
-                </div>
-            </Reveal>
-        </section>
+        <div className="fixed bottom-6 left-6 z-50 flex items-center gap-3 bg-[rgba(3,15,8,0.80)] backdrop-blur-md rounded-full border border-gold/30 p-2 pr-4 shadow-[0_4px_24px_rgba(0,0,0,0.5)] cursor-pointer hover:border-gold hover:shadow-[0_0_20px_rgba(201,168,76,0.2)] transition-all" onClick={togglePlay}>
+            <audio ref={audioRef} loop src="https://c.termai.cc/a160/d2iDsBg.mp3" />
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-gold transition-colors ${isPlaying ? 'bg-gold/10' : 'bg-transparent'}`}>
+                {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-1" />}
+            </div>
+            
+            <div className="flex-grow">
+                <div className="text-[10px] md:text-xs text-gold uppercase tracking-[0.2em] font-bold">Murottal</div>
+            </div>
+        </div>
     );
 }
 
