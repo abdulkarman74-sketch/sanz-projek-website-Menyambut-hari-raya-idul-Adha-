@@ -3,43 +3,104 @@
 
 @theme {
   --color-gold: #c9a84c;
-  --color-gold-light: #f1d592;
-  --color-ivory: #f5f0e8;
-  --color-white-silver: #e0e0e0;
+  --color-gold-light: #f5d98b;
+  --color-gold-dark: #8b6914;
+  --color-green-dark: #0a1f0e;
+  --color-green-mid: #1a3a22;
+  --color-green-light: #2d6a3f;
+  --color-cream: #f5f0e8;
+  --color-cream-dark: #d4c9a8;
 
   --font-amiri: 'Amiri', serif;
   --font-cinzel: 'Cinzel Decorative', cursive;
   --font-playfair: 'Playfair Display', serif;
 }
 
-* { cursor: none; }
+:root {
+  --gold: #c9a84c;
+  --gold-light: #f5d98b;
+  --gold-dark: #8b6914;
+  --green-dark: #0a1f0e;
+  --green-mid: #1a3a22;
+  --green-light: #2d6a3f;
+  --cream: #f5f0e8;
+  --cream-dark: #d4c9a8;
+  --glass-bg: rgba(5, 25, 12, 0.65);
+  --glass-border: rgba(201, 168, 76, 0.25);
+  --glass-blur: blur(12px);
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
 
 body {
-    background-color: #0a1628;
-    color: #f5f0e8;
+    background-image: url('https://c.termai.cc/i141/TgL9IXe.jpg');
+    background-size: cover;
+    background-position: center top;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    background-color: var(--green-dark);
+    color: var(--cream);
     font-family: var(--font-playfair);
     overflow-x: hidden;
     line-height: 1.6;
 }
 
-.layer-girih {
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(
+        160deg,
+        rgba(2, 12, 5, 0.82) 0%,
+        rgba(5, 22, 10, 0.75) 40%,
+        rgba(8, 28, 14, 0.80) 100%
+    );
+    z-index: 0;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+    background-position: center center;
+  }
+}
+
+main, nav, footer, .back-to-top {
+    position: relative;
+    z-index: 1;
+}
+
+/* Background Systems Backup */
+.bg-overlay-pattern {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23c9a84c' fill-opacity='1'%3E%3Cpath d='M40 0l10 30 30 10-30 10-10 30-10-30-30-10 30-10z'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.04;
+    z-index: 0;
+    pointer-events: none;
 }
 
-.layer-aurora {
-    background: radial-gradient(circle at 30% 30%, rgba(26, 107, 60, 0.3) 0%, transparent 40%),
-                radial-gradient(circle at 70% 70%, rgba(201, 168, 76, 0.15) 0%, transparent 40%);
-    animation: aurora 20s infinite alternate ease-in-out;
+
+/* Glassmorphism */
+.glass-card {
+    background: rgba(4, 20, 8, 0.60);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(201, 168, 76, 0.22);
+    border-radius: 14px;
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.50),
+      inset 0 1px 0 rgba(201, 168, 76, 0.08);
 }
 
-@keyframes aurora {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-5%, -5%) scale(1.1); }
-}
-
-.arabic-calligraphy {
-    text-shadow: 0 0 15px rgba(201, 168, 76, 0.6), 0 0 30px rgba(201, 168, 76, 0.6), 0 0 45px rgba(201, 168, 76, 0.6);
-    background: linear-gradient(to right, #c9a84c 20%, #f1d592 40%, #f1d592 60%, #c9a84c 80%);
+.text-gold-gradient {
+    background: linear-gradient(to right, var(--gold) 20%, var(--gold-light) 40%, var(--gold-light) 60%, var(--gold) 80%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -47,66 +108,124 @@ body {
 }
 
 @keyframes shimmer { to { background-position: 200% center; } }
-
-.lantern-glow {
-    background: radial-gradient(circle, rgba(241, 213, 146, 0.6) 0%, transparent 70%);
-    animation: flicker 0.5s infinite alternate;
+@keyframes shimmerBar {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-@keyframes flicker {
-    0% { opacity: 0.7; }
-    100% { opacity: 1; }
+@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+.animate-marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite;
 }
 
-.lantern-swing-left {
-    animation: swing 4s infinite ease-in-out;
-    transform-origin: top center;
+.hero-vignette::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 50%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  z-index: 0;
+  pointer-events: none;
 }
 
-.lantern-swing-right {
-    animation: swing 4s infinite ease-in-out;
-    animation-delay: 2s;
-    transform-origin: top center;
+@keyframes moonGlow {
+  0%, 100% { filter: drop-shadow(0 0 8px #c9a84c) drop-shadow(0 0 20px rgba(201,168,76,0.4)); }
+  50%       { filter: drop-shadow(0 0 16px #f5d98b) drop-shadow(0 0 40px rgba(201,168,76,0.7)); }
+}
+.moon-icon { animation: moonGlow 3s ease-in-out infinite; }
+
+.arabic-main {
+  text-shadow:
+    0 0 10px rgba(201, 168, 76, 1),
+    0 0 25px rgba(201, 168, 76, 0.8),
+    0 0 50px rgba(201, 168, 76, 0.5),
+    0 0 100px rgba(201, 168, 76, 0.3),
+    0 0 4px rgba(255, 255, 255, 0.9);
+  animation: arabicBreath 4s ease-in-out infinite;
+}
+@keyframes arabicBreath {
+  0%, 100% { text-shadow: 0 0 10px #c9a84c, 0 0 30px rgba(201,168,76,0.7), 0 0 60px rgba(201,168,76,0.4); }
+  50%       { text-shadow: 0 0 20px #f5d98b, 0 0 50px rgba(245,217,139,0.9), 0 0 90px rgba(201,168,76,0.6); }
 }
 
-@keyframes swing {
-    0%, 100% { transform: rotate(-8deg); }
-    50% { transform: rotate(8deg); }
+.hero-title {
+  -webkit-text-stroke: 1px rgba(201, 168, 76, 0.6);
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(201,168,76,0.2);
 }
 
-.islamic-card {
-    background: rgba(245, 240, 232, 0.05);
-    border: 1px solid rgba(201, 168, 76, 0.3);
-    border-radius: 20px 20px 0 0; 
-    transition: 0.4s;
+.takbir-marquee {
+  width: 100%;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.08) 20%,
+    rgba(201, 168, 76, 0.12) 50%,
+    rgba(201, 168, 76, 0.08) 80%,
+    transparent 100%
+  );
+  border-top: 1px solid rgba(201, 168, 76, 0.3);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
 }
 
-.islamic-card::before {
+.countdown-box {
+  background: rgba(3, 15, 7, 0.70);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  box-shadow:
+    0 0 30px rgba(201, 168, 76, 0.08),
+    0 8px 32px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(201,168,76,0.12);
+}
+
+
+/* Islamic Arch */
+.islamic-arch {
+    border-radius: 30px 30px 0 0;
+    position: relative;
+}
+.islamic-arch::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0; height: 5px;
-    background: var(--color-gold);
-    border-radius: 20px 20px 0 0;
+    top: 0; left: 0; right: 0; height: 10px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-dark));
+    border-radius: 30px 30px 0 0;
 }
 
-.islamic-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--color-gold);
-    box-shadow: 0 15px 30px rgba(201, 168, 76, 0.2);
+/* Flip Card Effect */
+.perspective-1000 {
+    perspective: 1000px;
+}
+.flip-inner {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+.group:hover .flip-inner {
+    transform: rotateY(180deg);
+}
+.flip-front, .flip-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.flip-back {
+    transform: rotateY(180deg);
 }
 
-.v-bar {
-    width: 3px;
-    background: var(--color-gold);
-    animation: v-anim 1s infinite alternate;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
 }
-
-@keyframes v-anim { from { height: 2px; } to { height: 18px; } }
-
-.flip-number {
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+::-webkit-scrollbar-track {
+    background: var(--green-dark);
 }
-
-.progress-bar-bg {
-    background: linear-gradient(to right, var(--color-gold), var(--color-gold-light));
+::-webkit-scrollbar-thumb {
+    background: var(--gold-dark);
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
 }
